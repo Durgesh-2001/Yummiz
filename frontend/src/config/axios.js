@@ -1,34 +1,51 @@
 import axios from 'axios';
 
-// Force production URL
+// Hardcode the production URL
 const API_BASE_URL = 'https://yummiz.up.railway.app';
-console.log('Using API URL:', API_BASE_URL); // Debug log
+console.log('API URL:', API_BASE_URL); // Debug log
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: false, // Disable credentials for now
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
   }
 });
 
-// Add request interceptor for debugging
+// Debug request interceptor
 axiosInstance.interceptors.request.use(
   config => {
-    console.log('Making request to:', config.url);
+    console.log('Request:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers
+    });
     return config;
   },
   error => {
+    console.error('Request Error:', error);
     return Promise.reject(error);
   }
 );
 
-// Add response interceptor for error handling
+// Debug response interceptor
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
-    console.error('API Error:', error.response?.data || error.message);
-    console.log('Full error details:', error); // Additional debug log
+    if (error.response) {
+      // Server responded with a status code outside 2xx range
+      console.error('Response Error:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error('No Response Error:', error.request);
+    } else {
+      // Error in request configuration
+      console.error('Request Config Error:', error.message);
+    }
     return Promise.reject(error);
   }
 );
