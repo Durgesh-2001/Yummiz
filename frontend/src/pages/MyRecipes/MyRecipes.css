@@ -1,0 +1,68 @@
+.my-recipes-container {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.my-recipes-container h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.saved-recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 20px 0;
+}
+
+.no-recipes {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  grid-column: 1 / -1;
+}
+
+.no-recipes p:first-child {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.no-recipes p:last-child {
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .my-recipes-container {
+    padding: 20px;
+  }
+  
+  .my-recipes-container h1 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Dark mode styles */
+.dark-mode.my-recipes-container {
+  background-color: var(--bg-dark);
+}
+
+.dark-mode .my-recipes-container h1 {
+  color: var(--text-light);
+}
+
+.dark-mode .no-recipes {
+  background: var(--card-bg-dark);
+}
+
+.dark-mode .no-recipes p:first-child {
+  color: var(--text-light);
+}
+
+.dark-mode .no-recipes p:last-child {
+  color: var(--text-secondary-light);
+}

@@ -1,0 +1,98 @@
+/* Main dashboard container */
+.dashboard {
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+}
+
+.dashboard__title {
+  text-align: center;
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+/* Stats wrapper */
+.dashboard__stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* Each stat block */
+.stat-item {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  width: 30%;
+  min-width: 250px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.stat-item:hover {
+  transform: scale(1.05);
+}
+
+.stat-item__title {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.stat-item__count {
+  font-size: 3em;
+  font-weight: bold;
+  color: #2d2d2d;
+  margin: 0;
+}
+
+/* Highlight approved requests */
+.stat-item.approved {
+  border-left: 10px solid #4CAF50;
+}
+
+/* Highlight rejected requests */
+.stat-item.rejected {
+  border-left: 10px solid #F44336;
+}
+
+/* Error message styling */
+.dashboard__error {
+  text-align: center;
+  font-size: 1.5em;
+  color: #F44336;
+  margin-top: 50px;
+}
+
+/* Loading state */
+.dashboard__loading {
+  text-align: center;
+  font-size: 1.5em;
+  color: #FF9800;
+  margin-top: 50px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .dashboard__stats {
+    flex-direction: column; /* Stack stats vertically */
+  }
+
+  .stat-item {
+    width: 100%; /* Make blocks take full width */
+    padding: 20px;
+  }
+
+  .stat-item__title {
+    font-size: 1.3em;
+  }
+
+  .stat-item__count {
+    font-size: 2.5em;
+  }
+}

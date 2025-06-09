@@ -1,0 +1,254 @@
+.notification-popup {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-color);
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  opacity: 1;
+  color: var(--text-color);
+}
+
+.notification-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.notification-item:hover {
+  background-color: var(--hover-bg);
+}
+
+.notification-item.unread {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.notification-item.unread:hover {
+  background-color: rgba(33, 150, 243, 0.15);
+}
+
+.notification-item.read {
+  background-color: var(--card-bg);
+}
+
+.notification-item.read:hover {
+  background-color: var(--hover-bg);
+}
+
+.notification-message {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.notification-content {
+  margin-bottom: 8px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+  color: var(--text-color);
+}
+
+.notification-content:hover {
+  background-color: var(--hover-bg);
+}
+
+.notification-header-text {
+  color: var(--text-color);
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.notification-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 8px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+.notification-status.approved {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border-color: rgba(76, 175, 80, 0.2);
+}
+
+.notification-status.rejected {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+  border-color: rgba(244, 67, 54, 0.2);
+}
+
+.notification-body {
+  color: var(--text-color);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+  opacity: 0.9;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--text-color);
+  opacity: 0.7;
+  display: block;
+  margin-top: 5px;
+}
+
+.no-notifications {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar customization */
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.notification-action-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notification-action-btn:hover {
+  background: var(--hover-bg);
+}
+
+.notification-delete-btn {
+  color: #ff4b4b;
+  border-color: #ff4b4b;
+}
+
+.notification-delete-btn:hover {
+  background: rgba(255, 75, 75, 0.1);
+}
+
+/* Dark theme specific overrides */
+.dark-mode .notification-popup {
+  background: var(--card-bg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .notification-item.unread {
+  background-color: rgba(33, 150, 243, 0.15);
+}
+
+.dark-mode .notification-item.unread:hover {
+  background-color: rgba(33, 150, 243, 0.2);
+}
+
+.dark-mode .notification-header {
+  background: var(--card-bg);
+}
+
+.dark-mode .notification-header-text {
+  color: #64B5F6;
+}
+
+.dark-mode .notification-status.approved {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #81C784;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.dark-mode .notification-status.rejected {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #E57373;
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.dark-mode .notification-body {
+  opacity: 0.85;
+}
+
+.dark-mode .notification-item.unread {
+  background-color: rgba(33, 150, 243, 0.15);
+}
+
+.dark-mode .notification-item.unread:hover {
+  background-color: rgba(33, 150, 243, 0.2);
+}

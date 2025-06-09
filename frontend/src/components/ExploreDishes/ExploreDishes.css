@@ -1,0 +1,183 @@
+.explore-dishes {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    animation: fadeIn 1s;
+}
+
+.explore-dishes h1 {
+    color: var(--text-color);  /* Changed from #262626 to CSS variable */
+    font-size: max(2.5vw, 24px);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.explore-dishes-text {
+    max-width: 60%;
+    color: var(--text-color);  /* Changed from #747474 to CSS variable */
+    opacity: 0.8;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.explore-dishes-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;  /* Reduced gap */
+    text-align: center;
+    margin: 20px 0;
+    overflow-x: scroll;
+    padding: 2px 0;  /* Reduced padding */
+    scroll-behavior: smooth;
+    cursor: pointer;
+}
+
+.explore-dishes-list::-webkit-scrollbar {
+    display: none;
+}
+
+.explore-dishes-list-item {
+    width: 130px;
+    min-width: 130px;
+    height: 131px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    padding: 5px;  /* Reduced padding */
+    overflow: hidden;
+}
+
+.explore-dishes-list-item:hover {
+    transform: translateY(-5px);
+}
+
+.explore-dishes-list-item img {
+    width: 100%;  /* Fill container width */
+    height: 100%;  /* Fill container height */
+    object-fit: cover;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.explore-dishes-list-item p {
+    margin-top: 10px;
+    color: #747474;
+    font-size: max(1.4vw, 14px);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.explore-dishes-list-item:hover p {
+    color: tomato;
+}
+
+.explore-dishes hr {
+    margin: 20px 0;
+    height: 2px;
+    background-color: #e2e2e2;
+    border: none;
+    width: 100%;
+}
+
+.explore-dishes-list-item .active {
+    border: 4px solid tomato;
+    padding: 2px;
+    transform: scale(1.05);
+}
+
+.explore-dishes-item img {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 2px;  /* Added small padding */
+}
+
+.explore-dishes-item img.active {
+  border: 3px solid #ff4757;
+  padding: 5px;
+  box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Added Media Queries for Responsive Design */
+@media screen and (max-width: 768px) {
+    .explore-dishes-text {
+        max-width: 100%;
+        font-size: 14px;
+    }
+
+    .explore-dishes h1 {
+        font-size: 20px;
+    }
+
+    .explore-dishes-list-item {
+        width: 100px;
+        min-width: 100px;
+        height: 100px;
+    }
+
+    .explore-dishes-list-item p {
+        font-size: 12px;
+    }
+    
+    .explore-dishes-list-item img {
+        width: 100px;  /* Smaller size for mobile */
+        height: 100px;
+    }
+
+  .explore-dishes-item img {
+    width: 65px;
+    height: 65px;
+  }
+
+  .explore-dishes-item img.active {
+    border: 2px solid #ff4757;
+    padding: 3px;
+  }
+  
+  /* Fix mobile highlight issue */
+  .explore-dishes-item:active img {
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+/* Dark Mode Styles */
+.dark-mode .explore-dishes h1,
+.dark-mode .explore-dishes-text {
+    color: var(--text-color);
+}
+
+.dark-mode .explore-dishes-list-item p {
+  color: #ffffff;
+}
+
+.dark-mode .explore-dishes-list-item:hover p {
+  color: #ff6b6b;
+}
+
+.dark-mode .explore-dishes hr {
+  background-color: #444;
+}
+
+.dark-mode .search-result-item {
+  color: #ffffff;
+}

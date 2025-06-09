@@ -1,0 +1,75 @@
+:root {
+    /* Layout */
+    --nav-height: 70px;
+    --nav-padding-y: 12px;
+    --nav-padding-x: 5%;
+    
+    /* Elements */
+    --logo-min-width: 85px;
+    --logo-width: 12%;
+    --profile-size: 45px;
+    
+    /* Colors */
+    --nav-bg: #ffffff;
+    --nav-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    --hover-brightness: 1.03;
+    
+    /* Animation */
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--nav-height);
+    padding: var(--nav-padding-y) var(--nav-padding-x);
+    background-color: var(--nav-bg);
+    box-shadow: var(--nav-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar .logo {
+    width: max(var(--logo-width), var(--logo-min-width));
+    height: auto;
+    transition: var(--transition);
+    will-change: transform;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.02) translateY(-1px);
+    filter: brightness(var(--hover-brightness));
+}
+
+.navbar .profile {
+    width: var(--profile-size);
+    height: var(--profile-size);
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: var(--transition);
+    will-change: transform;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .profile:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --nav-height: 60px;
+        --nav-padding-x: 20px;
+        --logo-width: 15%;
+        --profile-size: 40px;
+    }
+
+    .navbar {
+        padding: var(--nav-padding-y) var(--nav-padding-x);
+    }
+}
