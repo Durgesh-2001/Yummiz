@@ -5,8 +5,7 @@ export const cookieOptions = {
   secure: isProduction,
   sameSite: isProduction ? 'None' : 'Lax',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/',
-  domain: isProduction ? '.railway.app' : 'localhost'
+  path: '/'
 };
 
 export const clearCookieOptions = {
