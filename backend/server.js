@@ -62,22 +62,9 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration
-const allowedOrigins = [
-  "http://localhost:5173",      // dev frontend
-  "http://localhost:5174",      // dev admin frontend
-  "https://yummiz.vercel.app",  // prod frontend
-  "https://yummiz-admin.vercel.app" // prod admin
-];
-
+// Simplified CORS configuration for debugging
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
