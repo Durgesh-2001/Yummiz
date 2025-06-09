@@ -2,11 +2,8 @@ import React, { useState } from 'react'
 import './Login.css'
 import './SuccessNotification.css'
 import { assets } from '../../assets/assets'
-import axios from 'axios'
-import { sendOTP, verifyOTP } from '../../services/otpService'
 import { toast } from 'react-toastify'
-
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+import api from '../../api'
 
 const SuccessNotification = ({ message }) => (
     <div className="success-notification">
@@ -51,66 +48,57 @@ const Login = ({ setShowLogin }) => {
 
         try {
             const endpoint = isLogin ? '/api/user/login' : '/api/user/register'
-            const response = await axios.post(`${API_BASE_URL}${endpoint}`, currState)
+            const response = await api.post(endpoint, currState)
 
             if (response.data.success) {
-                if (isLogin) {
-                    if (response.data.token) {  // Check if token exists
-                        localStorage.setItem('token', response.data.token)
-                        localStorage.setItem('userName', response.data.user.name)
-                        setShowSuccess(true)
-                        // Reset state
-                        setCurrState({ name: '', email: '', password: '', mobile: '' })
-                        setTimeout(() => {
-                            setShowSuccess(false)
-                            setShowLogin(false)
-                            window.location.reload() // Reload to update state
-                        }, 2000)
-                    } else {
-                        setError('Authentication failed - No token received')
-                    }
-                } else {
-                    setShowSuccess(true)
-                    setTimeout(() => {
-                        setShowSuccess(false)
-                        setIsLogin(true)
-                        setCurrState({ name: '', email: '', password: '', mobile: '' })
-                    }, 2000)
-                }
-            } else {
-                setError(response.data.message || 'An error occurred')
+                const { token, user } = response.data
+                // Store auth data
+                localStorage.setItem('token', token)
+                localStorage.setItem('userName', user.name)
+                localStorage.setItem('userEmail', user.email)
+                
+                // Show success message
+                setShowSuccess(true)
+                toast.success(isLogin ? 'Successfully logged in!' : 'Successfully registered!')
+                
+                // Reset form
+                setCurrState({ name: '', email: '', password: '', mobile: '' })
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    setShowSuccess(false)
+                    setShowLogin(false)
+                    window.location.reload()
+                }, 2000)
             }
         } catch (err) {
-            console.error('Registration/Login Error:', err)
-            setError(err.response?.data?.message || 'An error occurred during authentication')
+            const errorMsg = err.response?.data?.message || 'Authentication failed'
+            console.error('Auth Error:', err)
+            setError(errorMsg)
+            toast.error(errorMsg)
         }
     }
 
     const sendOTPHandler = async () => {
         if (!currState.mobile || currState.mobile.length !== 10) {
-            setError('Please enter a valid 10-digit mobile number');
-            return;
+            setError('Please enter a valid 10-digit mobile number')
+            return
         }
-    
+
         try {
-            setError('');
-            const result = await sendOTP(currState.mobile);
-            if (result.success) {
-                setOtpSent(true);
-                toast.success('OTP sent successfully! Please check your phone.');
+            setError('')
+            const response = await api.post('/api/user/send-otp', { mobile: currState.mobile })
+            
+            if (response.data.success) {
+                setOtpSent(true)
+                toast.success('OTP sent successfully!')
             } else {
-                if (result.trialAccount) {
-                    toast.error('This number needs to be verified first in Twilio console');
-                    setError('For trial account: Please verify this number in Twilio console first');
-                } else {
-                    setError(result.message);
-                    toast.error(result.message);
-                }
+                throw new Error(response.data.message)
             }
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.message;
-            setError(errorMessage);
-            toast.error(errorMessage);
+            const errorMsg = err.response?.data?.message || err.message
+            setError(errorMsg)
+            toast.error(errorMsg)
         }
     }
 
@@ -122,13 +110,20 @@ const Login = ({ setShowLogin }) => {
         }
 
         try {
-            setError('')
-            const result = await verifyOTP(currState.mobile, otp)
-            if (result.success) {
-                localStorage.setItem('token', result.token)
-                localStorage.setItem('userName', result.user.name || 'User')
+            const response = await api.post('/api/user/verify-otp', {
+                mobile: currState.mobile,
+                otp
+            })
+
+            if (response.data.success) {
+                const { token, user } = response.data
+                localStorage.setItem('token', token)
+                localStorage.setItem('userName', user.name || 'User')
+                localStorage.setItem('userEmail', user.email)
+                
                 toast.success('Login successful!')
                 setShowSuccess(true)
+                
                 setTimeout(() => {
                     setShowSuccess(false)
                     setShowLogin(false)
@@ -136,15 +131,16 @@ const Login = ({ setShowLogin }) => {
                 }, 1500)
             }
         } catch (err) {
-            setError(err.message)
-            toast.error(err.message)
+            const errorMsg = err.response?.data?.message || 'OTP verification failed'
+            setError(errorMsg)
+            toast.error(errorMsg)
         }
     }
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${API_BASE_URL}/api/user/login`, {
+            const response = await api.post('/api/user/login', {
                 email: loginMethod === 'password' ? currState.email : null,
                 password: loginMethod === 'password' ? currState.password : null,
                 mobile: loginMethod === 'otp' ? currState.mobile : null
