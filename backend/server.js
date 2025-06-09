@@ -62,24 +62,42 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Parse CORS_ORIGIN into array of allowed origins
-const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['https://yummiz.vercel.app', 'https://yummiz-admin.vercel.app'];
-console.log('✅ Allowed CORS origins:', corsOrigins);
+// Parse and validate CORS origins
+const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
+const isProduction = process.env.NODE_ENV === 'production';
 
-// CORS middleware configuration
+if (isProduction && corsOrigins.length === 0) {
+  console.error('❌ CORS_ORIGIN must be set in production');
+  process.exit(1);
+}
+
+console.log('✅ Allowed CORS origins:', isProduction ? corsOrigins : 'All origins (development)');
+
+// CORS configuration
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (corsOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      console.warn('❌ Blocked by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
+    // Allow all origins in development
+    if (!isProduction) {
+      return callback(null, true);
     }
+
+    // Allow requests with no origin (like mobile apps, curl)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // In production, check against allowed origins
+    if (corsOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn('❌ Blocked by CORS:', origin);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400, // 24 hours
   optionsSuccessStatus: 200
 }));
 

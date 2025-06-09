@@ -6,6 +6,8 @@ import axios from 'axios'
 import { sendOTP, verifyOTP } from '../../services/otpService'
 import { toast } from 'react-toastify'
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const SuccessNotification = ({ message }) => (
     <div className="success-notification">
         <span className="thumbs-up">👍</span>
@@ -48,9 +50,8 @@ const Login = ({ setShowLogin }) => {
         }
 
         try {
-            const BASE_URL = import.meta.env.VITE_BACKEND_URL;
             const endpoint = isLogin ? '/api/user/login' : '/api/user/register'
-            const response = await axios.post(`${BASE_URL}${endpoint}`, currState)
+            const response = await axios.post(`${API_BASE_URL}${endpoint}`, currState)
 
             if (response.data.success) {
                 if (isLogin) {
@@ -143,7 +144,7 @@ const Login = ({ setShowLogin }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:4000/api/user/login', {
+            const response = await axios.post(`${API_BASE_URL}/api/user/login`, {
                 email: loginMethod === 'password' ? currState.email : null,
                 password: loginMethod === 'password' ? currState.password : null,
                 mobile: loginMethod === 'otp' ? currState.mobile : null
@@ -155,8 +156,13 @@ const Login = ({ setShowLogin }) => {
             } else if (response.data.success) {
                 // Handle successful login
                 localStorage.setItem('token', response.data.token);
-                setShowLogin(false);
-                toast.success('Login successful');
+                localStorage.setItem('userName', response.data.user.name);
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    setShowLogin(false);
+                    window.location.reload();
+                }, 2000);
             }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');

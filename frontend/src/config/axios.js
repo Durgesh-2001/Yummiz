@@ -1,63 +1,64 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-// Force production URL
-const API_BASE_URL = 'https://yummiz.up.railway.app';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 console.log('[Axios] Using API URL:', API_BASE_URL);
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: false,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
-  // Add timeout
   timeout: 10000,
 });
 
-// Debug request interceptor
+// Add auth token to requests if available
 axiosInstance.interceptors.request.use(
   config => {
-    const fullUrl = `${config.baseURL}${config.url}`;
-    console.log('[Axios] Making request:', {
-      fullUrl,
-      method: config.method?.toUpperCase(),
-      headers: config.headers,
-      data: config.data
-    });
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
-  error => {
-    console.error('[Axios] Request Error:', error);
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
-// Debug response interceptor
+// Handle response errors
 axiosInstance.interceptors.response.use(
   response => {
-    console.log('[Axios] Response:', {
-      url: response.config.url,
-      status: response.status,
-      data: response.data
-    });
     return response;
   },
   error => {
-    if (error.response) {
-      console.error('[Axios] Response Error:', {
-        url: error.config?.url,
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      });
-    } else if (error.request) {
-      console.error('[Axios] No Response:', {
-        url: error.config?.url,
-        request: error.request
-      });
-    } else {
-      console.error('[Axios] Config Error:', error.message);
+    if (!error.response) {
+      // Network error
+      toast.error('Network error. Please check your connection.');
+      return Promise.reject(error);
     }
+
+    const { status, data } = error.response;
+
+    switch (status) {
+      case 401:
+        // Unauthorized - clear token and redirect to login
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        window.location.reload();
+        break;
+      case 403:
+        toast.error('Access denied');
+        break;
+      case 404:
+        toast.error('Resource not found');
+        break;
+      case 429:
+        toast.error('Too many requests. Please try again later.');
+        break;
+      default:
+        toast.error(data?.message || 'An error occurred');
+    }
+
     return Promise.reject(error);
   }
 );

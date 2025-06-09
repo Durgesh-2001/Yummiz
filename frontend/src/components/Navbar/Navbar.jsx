@@ -115,7 +115,7 @@ const Navbar = ({ setShowLogin }) => {
 
   const handleDeleteNotification = async (notificationId) => {
     try {
-      const response = await axios.delete(`http://localhost:4000/api/notifications/${notificationId}`);
+      const response = await axios.delete(`${API_BASE_URL}/api/notifications/${notificationId}`);
       if (response.data.success) {
         setNotifications(prev => prev.filter(notification => notification._id !== notificationId));
         setUnreadCount(prev => prev - 1);
