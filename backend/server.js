@@ -62,8 +62,26 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Simple CORS middleware
-app.use(cors());
+// Parse CORS_ORIGIN into array of allowed origins
+const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['https://yummiz.vercel.app', 'https://yummiz-admin.vercel.app'];
+console.log('✅ Allowed CORS origins:', corsOrigins);
+
+// CORS middleware configuration
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (corsOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      console.warn('❌ Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
 
 // Serve static files with proper CORS headers
 app.use('/uploads', express.static('uploads', {

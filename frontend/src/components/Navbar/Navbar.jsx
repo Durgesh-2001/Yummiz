@@ -97,7 +97,7 @@ const Navbar = ({ setShowLogin }) => {
 
   const handleMarkAsRead = async (notificationId) => {
     try {
-      const response = await axios.put(`http://localhost:4000/api/notifications/${notificationId}/read`);
+      const response = await axios.put(`${API_BASE_URL}/api/notifications/${notificationId}/read`);
       if (response.data.success) {
         setNotifications(prev => 
           prev.map(notification => 
