@@ -3,7 +3,7 @@ import './Login.css'
 import './SuccessNotification.css'
 import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
-import api from '../../api'
+import api from '../../config/axios'
 
 const SuccessNotification = ({ message }) => (
     <div className="success-notification">
@@ -47,7 +47,7 @@ const Login = ({ setShowLogin }) => {
         }
 
         try {
-            const endpoint = isLogin ? '/api/user/login' : '/api/user/register'
+            const endpoint = `/api/user/${isLogin ? 'login' : 'register'}`
             const response = await api.post(endpoint, currState)
 
             if (response.data.success) {
@@ -59,7 +59,7 @@ const Login = ({ setShowLogin }) => {
                 
                 // Show success message
                 setShowSuccess(true)
-                toast.success(isLogin ? 'Successfully logged in!' : 'Successfully registered!')
+                toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!')
                 
                 // Reset form
                 setCurrState({ name: '', email: '', password: '', mobile: '' })
@@ -69,11 +69,11 @@ const Login = ({ setShowLogin }) => {
                     setShowSuccess(false)
                     setShowLogin(false)
                     window.location.reload()
-                }, 2000)
+                }, 1500)
             }
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Authentication failed'
-            console.error('Auth Error:', err)
+            const errorMsg = err.response?.data?.message || 
+                           (isLogin ? 'Login failed' : 'Registration failed')
             setError(errorMsg)
             toast.error(errorMsg)
         }
