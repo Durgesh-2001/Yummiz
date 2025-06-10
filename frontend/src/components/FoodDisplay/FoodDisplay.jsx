@@ -1,11 +1,13 @@
 import React, { useContext } from 'react'
 import './FoodDisplay.css'
 import { StoreContext } from '../../context/StoreContext'
+import { ThemeContext } from '../../context/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 import StarRating from '../StarRating/StarRating'
 
 const FoodDisplay = ({ category, setShowLogin, customFoodList }) => {
   const { foodList } = useContext(StoreContext)
+  const { darkMode } = useContext(ThemeContext)
   const navigate = useNavigate()
   const displayList = customFoodList || foodList
 
@@ -24,7 +26,7 @@ const FoodDisplay = ({ category, setShowLogin, customFoodList }) => {
   }
 
   return (
-    <div className='food-display' id='food-display'>
+    <div className={`food-display ${darkMode ? 'dark-mode' : ''}`} id='food-display'>
       <h2>{customFoodList ? 'Saved Recipes' : 'Top Dishes'}</h2>
       <div className="food-display-list">
         {!displayList ? (

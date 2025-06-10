@@ -4,13 +4,14 @@
     {
       "src": "/api/(.*)",
       "dest": "https://yummiz.up.railway.app/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ],
   "env": {
     "VITE_BACKEND_URL": "https://yummiz.up.railway.app"
+  },
+  "build": {
+    "env": {
+      "VITE_BACKEND_URL": "https://yummiz.up.railway.app"
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
 import Login from './components/Login/Login'
+import Register from './components/Register/Register'
 
 // Pages
 import Home from './pages/Home/Home'
@@ -22,19 +23,30 @@ import { ThemeProvider } from './context/ThemeContext';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false)
+  const [showRegister, setShowRegister] = useState(false)
 
   useEffect(() => {
-    if (showLogin) {
+    if (showLogin || showRegister) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'
     }
-  }, [showLogin])
+  }, [showLogin, showRegister])
+
+  const switchToRegister = () => {
+    setShowLogin(false)
+    setShowRegister(true)
+  }
+
+  const switchToLogin = () => {
+    setShowRegister(false)
+    setShowLogin(true)
+  }
 
   return (
     <ThemeProvider>
       <StoreContextProvider>
-        <div className={`App ${showLogin ? 'overlay' : ''}`}>
+        <div className={`App ${showLogin || showRegister ? 'overlay' : ''}`}>
           <ToastContainer />
           <Navbar setShowLogin={setShowLogin} />
           <Routes>
@@ -48,7 +60,18 @@ const App = () => {
           <Footer />
           {showLogin && (
             <div className="modal-overlay">
-              <Login setShowLogin={setShowLogin} />
+              <Login 
+                setShowLogin={setShowLogin}
+                switchToRegister={switchToRegister}
+              />
+            </div>
+          )}
+          {showRegister && (
+            <div className="modal-overlay">
+              <Register 
+                setShowLogin={setShowLogin}
+                switchToLogin={switchToLogin}
+              />
             </div>
           )}
         </div>

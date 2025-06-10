@@ -1,27 +1,17 @@
 import React, { useState } from 'react'
 import './Login.css'
-import './SuccessNotification.css'
 import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
 import api from '../../config/axios'
 
-const SuccessNotification = ({ message }) => (
-    <div className="success-notification">
-        <span className="thumbs-up">👍</span>
-        <span>{message}</span>
-    </div>
-)
-
-const Login = ({ setShowLogin }) => {
+const Login = ({ setShowLogin, switchToRegister }) => {
     const [currState, setCurrState] = useState({
-        name: '',
         email: '',
         password: '',
         mobile: ''
     })
     const [error, setError] = useState('')
     const [isLogin, setIsLogin] = useState(true)
-    const [showSuccess, setShowSuccess] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [isPhoneLogin, setIsPhoneLogin] = useState(false)
     const [otpSent, setOtpSent] = useState(false)
@@ -40,40 +30,28 @@ const Login = ({ setShowLogin }) => {
     const onSubmit = async (e) => {
         e.preventDefault()
 
-        // Validation check
-        if ((!isLogin && !currState.name) || !currState.email || !currState.password) {
+        if (!currState.email || !currState.password) {
             setError('Please fill all required fields')
             return
         }
 
         try {
-            const endpoint = `/api/user/${isLogin ? 'login' : 'register'}`
-            const response = await api.post(endpoint, currState)
-
+            const response = await api.post('/api/user/login', currState)
+            
             if (response.data.success) {
                 const { token, user } = response.data
-                // Store auth data
                 localStorage.setItem('token', token)
                 localStorage.setItem('userName', user.name)
-                localStorage.setItem('userEmail', user.email)
                 
-                // Show success message
-                setShowSuccess(true)
-                toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!')
+                toast.success('Welcome back!')
                 
-                // Reset form
-                setCurrState({ name: '', email: '', password: '', mobile: '' })
-                
-                // Redirect after delay
                 setTimeout(() => {
-                    setShowSuccess(false)
                     setShowLogin(false)
                     window.location.reload()
                 }, 1500)
             }
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 
-                           (isLogin ? 'Login failed' : 'Registration failed')
+            const errorMsg = err.response?.data?.message || 'Login failed'
             setError(errorMsg)
             toast.error(errorMsg)
         }
@@ -122,10 +100,8 @@ const Login = ({ setShowLogin }) => {
                 localStorage.setItem('userEmail', user.email)
                 
                 toast.success('Login successful!')
-                setShowSuccess(true)
                 
                 setTimeout(() => {
-                    setShowSuccess(false)
                     setShowLogin(false)
                     window.location.reload()
                 }, 1500)
@@ -137,41 +113,8 @@ const Login = ({ setShowLogin }) => {
         }
     }
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await api.post('/api/user/login', {
-                email: loginMethod === 'password' ? currState.email : null,
-                password: loginMethod === 'password' ? currState.password : null,
-                mobile: loginMethod === 'otp' ? currState.mobile : null
-            });
-
-            if (response.data.requireOTP) {
-                setOtpSent(true);
-                toast.success('OTP sent successfully');
-            } else if (response.data.success) {
-                // Handle successful login
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userName', response.data.user.name);
-                setShowSuccess(true);
-                setTimeout(() => {
-                    setShowSuccess(false);
-                    setShowLogin(false);
-                    window.location.reload();
-                }, 2000);
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Login failed');
-        }
-    };
-
     return (
         <div className="login-overlay">
-            {showSuccess && (
-                <SuccessNotification 
-                    message={isLogin ? "Successfully logged in!" : "Successfully signed up!"}
-                />
-            )}
             <div className="login-container">
                 <div className="login-title">
                     <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
@@ -259,16 +202,6 @@ const Login = ({ setShowLogin }) => {
                     </form>
                 ) : (
                     <form onSubmit={onSubmit} className="login-inputs">
-                        {!isLogin && (
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Name"
-                                value={currState.name}
-                                onChange={onChangeHandler}
-                                required
-                            />
-                        )}
                         <input
                             type="email"
                             name="email"
@@ -294,16 +227,6 @@ const Login = ({ setShowLogin }) => {
                                 {showPassword ? "👁️" : "👁️‍🗨️"}
                             </button>
                         </div>
-                        {!isLogin && (
-                            <input
-                                type="tel"
-                                name="mobile"
-                                placeholder="Mobile"
-                                value={currState.mobile}
-                                onChange={onChangeHandler}
-                                maxLength="10"
-                            />
-                        )}
                         {isLogin ? (
                             <div className="remember-me">
                                 <input type="checkbox" id="remember" />
@@ -332,16 +255,8 @@ const Login = ({ setShowLogin }) => {
                         </button>
 
                         <p className="toggle-auth">
-                            {isLogin ? "Don't have an account? " : "Already have an account? "}
-                            <span 
-                                onClick={() => {
-                                    setIsLogin(!isLogin)
-                                    setCurrState({ name: '', email: '', password: '', mobile: '' })
-                                    setError('')
-                                }}
-                            >
-                                {isLogin ? 'Sign Up' : 'Login'}
-                            </span>
+                            Don't have an account? 
+                            <span onClick={switchToRegister}>Sign Up</span>
                         </p>
                     </form>
                 )}

@@ -1,0 +1,211 @@
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.login-container {
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-container.light {
+    background: #ffffff;
+    color: #333333;
+}
+
+.login-container.dark {
+    background: #1a1a1a;
+    color: #ffffff;
+}
+
+.login-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-title h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.close-button {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-button:hover {
+    opacity: 1;
+}
+
+.error-message {
+    background: #ffe6e6;
+    color: #d63031;
+    padding: 0.8rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.login-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-inputs input {
+    background: transparent;
+    padding: 0.8rem;
+    border: 1px solid;
+    transition: all 0.3s ease;
+}
+
+.login-inputs input:focus {
+    outline: none;
+    border-color: #FF6B6B;
+}
+
+.light .login-inputs input {
+    border-color: #ddd;
+    color: #333333;
+}
+
+.dark .login-inputs input {
+    border-color: #404040;
+    color: #ffffff;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.show-password-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.show-password-button:hover {
+    opacity: 1;
+}
+
+.terms-privacy {
+    margin: 1rem 0;
+}
+
+.terms-privacy label {
+    color: #666666;
+}
+
+.dark .terms-privacy label {
+    color: #bbbbbb;
+}
+
+.terms-privacy a {
+    color: #FF6B6B;
+    text-decoration: none;
+}
+
+.dark .terms-privacy a {
+    color: #ff8585;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    margin-top: 0.2rem;
+}
+
+.checkbox-wrapper label {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.submit-button {
+    background: #FF6B6B;
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.submit-button:hover {
+    background: #ff5252;
+}
+
+.toggle-auth {
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.toggle-auth span {
+    color: #FF6B6B;
+    cursor: pointer;
+    margin-left: 0.3rem;
+}
+
+.toggle-auth span:hover {
+    text-decoration: underline;
+}
+
+.dark .login-inputs input::placeholder {
+    color: #888888;
+}
+
+.light .login-inputs input::placeholder {
+    color: #666666;
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.5rem;
+    }
+    
+    .login-title h2 {
+        font-size: 1.3rem;
+    }
+    
+    .login-inputs input {
+        padding: 0.7rem;
+    }
+}

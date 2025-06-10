@@ -150,3 +150,32 @@
 .dark-mode .recipe-not-found {
   color: var(--text-secondary-light);
 }
+
+.save-button, .remove-recipe {
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .remove-recipe {
+    background-color: transparent;
+    color: var(--accent-color, #ff6b6b);
+    border: 1px solid var(--accent-color, #ff6b6b);
+}
+
+.dark-mode .remove-recipe:hover {
+    background-color: var(--accent-color, #ff6b6b);
+    color: var(--text-light, #fff);
+    transform: translateY(-2px);
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dark-mode .rating {
+    color: var(--text-secondary-light, #aaa);
+}

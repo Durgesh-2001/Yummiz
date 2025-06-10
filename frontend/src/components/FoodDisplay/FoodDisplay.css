@@ -200,6 +200,67 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
+.star-rating {
+    color: #ffd700;
+    transition: color 0.3s ease;
+}
+
+.dark-mode .star-rating {
+    color: #ffeb3b;
+}
+
+.star-rating .empty {
+    color: #ddd;
+}
+
+.dark-mode .star-rating .empty {
+    color: #555;
+}
+
+.recipe-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.save-recipe, .remove-recipe {
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.save-recipe {
+    background: var(--primary-color, #FF6B6B);
+    color: white;
+    border: none;
+}
+
+.save-recipe:hover {
+    background: var(--primary-hover, #ff5252);
+}
+
+.remove-recipe {
+    background: transparent;
+    border: 1px solid var(--primary-color, #FF6B6B);
+    color: var(--primary-color, #FF6B6B);
+}
+
+.dark-mode .remove-recipe {
+    border-color: #ff8585;
+    color: #ff8585;
+}
+
+.remove-recipe:hover {
+    background: var(--primary-color, #FF6B6B);
+    color: white;
+}
+
+.dark-mode .remove-recipe:hover {
+    background: #ff8585;
+}
+
 @keyframes fadeIn {
     0% {
         opacity: 0;

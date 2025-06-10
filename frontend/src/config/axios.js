@@ -1,11 +1,14 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const isProduction = import.meta.env.PROD;
+const API_BASE_URL = isProduction 
+  ? import.meta.env.VITE_BACKEND_URL 
+  : '';
 
 // Log API URL on startup for debugging
-console.log(`[API] Using backend URL: ${API_BASE_URL}`);
-console.log(`[API] Running in ${import.meta.env.MODE} mode`);
+console.log(`[API] Using backend URL: ${API_BASE_URL || '/api'}`);
+console.log(`[API] Running in ${isProduction ? 'production' : 'development'} mode`);
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -37,8 +40,9 @@ axiosInstance.interceptors.response.use(
   response => response,
   error => {
     if (!error.response) {
-      toast.error(`Connection failed. Backend URL: ${API_BASE_URL}`);
-      return Promise.reject(new Error('Network error - Please check your connection'));
+      toast.error('Network error - Please check if the server is running');
+      console.error('[API] Network Error:', error);
+      return Promise.reject(new Error('Network error - Server may be down'));
     }
 
     const { status, data } = error.response;
