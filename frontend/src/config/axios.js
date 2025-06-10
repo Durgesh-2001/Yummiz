@@ -1,17 +1,10 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const isProduction = import.meta.env.PROD;
-const API_BASE_URL = isProduction 
-  ? import.meta.env.VITE_BACKEND_URL 
-  : '';
-
-// Log API URL on startup for debugging
-console.log(`[API] Using backend URL: ${API_BASE_URL || '/api'}`);
-console.log(`[API] Running in ${isProduction ? 'production' : 'development'} mode`);
+const API_URL = 'https://yummiz.up.railway.app';
 
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

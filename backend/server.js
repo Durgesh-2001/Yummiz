@@ -66,40 +66,43 @@ app.use(express.urlencoded({ extended: true }));
 const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
 const isProduction = process.env.NODE_ENV === 'production';
 
-if (isProduction && corsOrigins.length === 0) {
-  console.error('❌ CORS_ORIGIN must be set in production');
-  process.exit(1);
-}
-
-console.log('✅ Allowed CORS origins:', isProduction ? corsOrigins : 'All origins (development)');
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://yummiz.vercel.app',
+  'https://yummiz-admin.vercel.app',
+  'https://yummiz-git-main.vercel.app',
+  'https://yummiz.up.railway.app'
+];
 
 // CORS configuration
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow all origins in development
-    if (!isProduction) {
-      return callback(null, true);
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
     }
-
-    // Allow requests with no origin (like mobile apps, curl)
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    // In production, check against allowed origins
-    if (corsOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    console.warn('❌ Blocked by CORS:', origin);
-    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400, // 24 hours
-  optionsSuccessStatus: 200
+  allowedHeaders: [
+    'Origin',
+    'Content-Type',
+    'Accept',
+    'Authorization',
+    'X-Requested-With'
+  ]
 }));
+
+// Log CORS settings in development
+if (process.env.NODE_ENV !== 'production') {
+  console.log('✅ Allowed CORS origins:', allowedOrigins);
+}
 
 // Serve static files with proper CORS headers
 app.use('/uploads', express.static('uploads', {
@@ -121,12 +124,15 @@ app.get("/", (_req, res) => {
 });
 
 // Error handling middleware
-app.use((err, _req, res, _next) => {
-  console.error("Global error:", err);
-  res.status(500).json({
-    message: "Internal server error",
-    error: err.message,
-  });
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({
+      success: false,
+      message: 'Origin not allowed'
+    });
+  }
+  next(err);
 });
 
 // Async start

@@ -1,17 +1,22 @@
 import React, { useState } from 'react'
 import './Login.css'
 import { assets } from '../../assets/assets'
-import { toast } from 'react-toastify'
 import api from '../../config/axios'
+import { sendOTP, verifyOTP } from '../../services/otpService'
+import { toast } from 'react-toastify'
 
-const Login = ({ setShowLogin, switchToRegister }) => {
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+const Login = ({ setShowLogin }) => {
     const [currState, setCurrState] = useState({
+        name: '',
         email: '',
         password: '',
         mobile: ''
     })
     const [error, setError] = useState('')
     const [isLogin, setIsLogin] = useState(true)
+    const [showSuccess, setShowSuccess] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [isPhoneLogin, setIsPhoneLogin] = useState(false)
     const [otpSent, setOtpSent] = useState(false)
@@ -30,28 +35,45 @@ const Login = ({ setShowLogin, switchToRegister }) => {
     const onSubmit = async (e) => {
         e.preventDefault()
 
-        if (!currState.email || !currState.password) {
+        // Validation check
+        if ((!isLogin && !currState.name) || !currState.email || !currState.password) {
             setError('Please fill all required fields')
             return
         }
 
         try {
-            const response = await api.post('/api/user/login', currState)
-            
+            const endpoint = isLogin ? '/api/user/login' : '/api/user/register'
+            const response = await api.post(endpoint, currState)
+
             if (response.data.success) {
-                const { token, user } = response.data
-                localStorage.setItem('token', token)
-                localStorage.setItem('userName', user.name)
-                
-                toast.success('Welcome back!')
-                
-                setTimeout(() => {
-                    setShowLogin(false)
-                    window.location.reload()
-                }, 1500)
+                if (isLogin) {
+                    if (response.data.token) {  // Check if token exists
+                        localStorage.setItem('token', response.data.token)
+                        localStorage.setItem('userName', response.data.user.name)
+                        setShowSuccess(true)
+                        // Reset state
+                        setCurrState({ name: '', email: '', password: '', mobile: '' })
+                        setTimeout(() => {
+                            setShowSuccess(false)
+                            setShowLogin(false)
+                            window.location.reload() // Reload to update state
+                        }, 2000)
+                    } else {
+                        setError('Authentication failed - No token received')
+                    }
+                } else {
+                    setShowSuccess(true)
+                    setTimeout(() => {
+                        setShowSuccess(false)
+                        setIsLogin(true)
+                        setCurrState({ name: '', email: '', password: '', mobile: '' })
+                    }, 2000)
+                }
+            } else {
+                setError(response.data.message || 'An error occurred')
             }
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Login failed'
+            const errorMsg = err.response?.data?.message || 'Authentication failed'
             setError(errorMsg)
             toast.error(errorMsg)
         }
@@ -59,24 +81,29 @@ const Login = ({ setShowLogin, switchToRegister }) => {
 
     const sendOTPHandler = async () => {
         if (!currState.mobile || currState.mobile.length !== 10) {
-            setError('Please enter a valid 10-digit mobile number')
-            return
+            setError('Please enter a valid 10-digit mobile number');
+            return;
         }
-
+    
         try {
-            setError('')
-            const response = await api.post('/api/user/send-otp', { mobile: currState.mobile })
-            
-            if (response.data.success) {
-                setOtpSent(true)
-                toast.success('OTP sent successfully!')
+            setError('');
+            const result = await sendOTP(currState.mobile);
+            if (result.success) {
+                setOtpSent(true);
+                toast.success('OTP sent successfully! Please check your phone.');
             } else {
-                throw new Error(response.data.message)
+                if (result.trialAccount) {
+                    toast.error('This number needs to be verified first in Twilio console');
+                    setError('For trial account: Please verify this number in Twilio console first');
+                } else {
+                    setError(result.message);
+                    toast.error(result.message);
+                }
             }
         } catch (err) {
-            const errorMsg = err.response?.data?.message || err.message
-            setError(errorMsg)
-            toast.error(errorMsg)
+            const errorMessage = err.response?.data?.message || err.message;
+            setError(errorMessage);
+            toast.error(errorMessage);
         }
     }
 
@@ -88,33 +115,60 @@ const Login = ({ setShowLogin, switchToRegister }) => {
         }
 
         try {
-            const response = await api.post('/api/user/verify-otp', {
-                mobile: currState.mobile,
-                otp
-            })
-
-            if (response.data.success) {
-                const { token, user } = response.data
-                localStorage.setItem('token', token)
-                localStorage.setItem('userName', user.name || 'User')
-                localStorage.setItem('userEmail', user.email)
-                
+            setError('')
+            const result = await verifyOTP(currState.mobile, otp)
+            if (result.success) {
+                localStorage.setItem('token', result.token)
+                localStorage.setItem('userName', result.user.name || 'User')
                 toast.success('Login successful!')
-                
+                setShowSuccess(true)
                 setTimeout(() => {
+                    setShowSuccess(false)
                     setShowLogin(false)
                     window.location.reload()
                 }, 1500)
             }
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'OTP verification failed'
-            setError(errorMsg)
-            toast.error(errorMsg)
+            setError(err.message)
+            toast.error(err.message)
         }
     }
 
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.post('/api/user/login', {
+                email: loginMethod === 'password' ? currState.email : null,
+                password: loginMethod === 'password' ? currState.password : null,
+                mobile: loginMethod === 'otp' ? currState.mobile : null
+            });
+
+            if (response.data.requireOTP) {
+                setOtpSent(true);
+                toast.success('OTP sent successfully');
+            } else if (response.data.success) {
+                // Handle successful login
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userName', response.data.user.name);
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    setShowLogin(false);
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Login failed');
+        }
+    };
+
     return (
         <div className="login-overlay">
+            {showSuccess && (
+                <SuccessNotification 
+                    message={isLogin ? "Successfully logged in!" : "Successfully signed up!"}
+                />
+            )}
             <div className="login-container">
                 <div className="login-title">
                     <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
@@ -202,6 +256,16 @@ const Login = ({ setShowLogin, switchToRegister }) => {
                     </form>
                 ) : (
                     <form onSubmit={onSubmit} className="login-inputs">
+                        {!isLogin && (
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Name"
+                                value={currState.name}
+                                onChange={onChangeHandler}
+                                required
+                            />
+                        )}
                         <input
                             type="email"
                             name="email"
@@ -227,6 +291,16 @@ const Login = ({ setShowLogin, switchToRegister }) => {
                                 {showPassword ? "👁️" : "👁️‍🗨️"}
                             </button>
                         </div>
+                        {!isLogin && (
+                            <input
+                                type="tel"
+                                name="mobile"
+                                placeholder="Mobile"
+                                value={currState.mobile}
+                                onChange={onChangeHandler}
+                                maxLength="10"
+                            />
+                        )}
                         {isLogin ? (
                             <div className="remember-me">
                                 <input type="checkbox" id="remember" />
@@ -255,8 +329,16 @@ const Login = ({ setShowLogin, switchToRegister }) => {
                         </button>
 
                         <p className="toggle-auth">
-                            Don't have an account? 
-                            <span onClick={switchToRegister}>Sign Up</span>
+                            {isLogin ? "Don't have an account? " : "Already have an account? "}
+                            <span 
+                                onClick={() => {
+                                    setIsLogin(!isLogin)
+                                    setCurrState({ name: '', email: '', password: '', mobile: '' })
+                                    setError('')
+                                }}
+                            >
+                                {isLogin ? 'Sign Up' : 'Login'}
+                            </span>
                         </p>
                     </form>
                 )}
