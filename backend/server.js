@@ -72,7 +72,12 @@ const allowedOrigins = [
   'https://yummiz.vercel.app',
   'https://yummiz-admin.vercel.app',
   'https://yummiz-git-main.vercel.app',
-  'https://yummiz.up.railway.app'
+  'https://yummiz.up.railway.app',
+  // Add Vercel preview URLs
+  'https://yummiz-n1sdt9jsy-durgeshs-projects-1e7199a1.vercel.app',
+  'https://yummiz-gv9smkr1o-durgeshs-projects-1e7199a1.vercel.app',
+  // Wildcard for all Vercel preview deployments
+  /^https:\/\/yummiz(?:-[a-z0-9]+)?(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 
 // CORS configuration
@@ -81,7 +86,14 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, Postman)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return origin === allowed;
+    });
+    
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.log('Blocked by CORS:', origin);
