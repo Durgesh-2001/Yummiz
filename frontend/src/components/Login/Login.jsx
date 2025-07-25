@@ -1,90 +1,88 @@
-import React, { useState, useContext } from 'react'
-import './Login.css'
-import { assets } from '../../assets/assets'
-import axios from 'axios'
-import { sendOTP, verifyOTP } from '../../services/otpService'
-import { toast } from 'react-toastify'
-import { ThemeContext } from '../../context/ThemeContext'
+import React, { useState, useContext } from 'react';
+import './Login.css';
+import { assets } from '../../assets/assets';
+import axios from 'axios';
+import { sendOTP, verifyOTP } from '../../services/otpService';
+import { toast } from 'react-toastify';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Login = ({ setShowLogin }) => {
     const { darkMode } = useContext(ThemeContext);
+
     const [currState, setCurrState] = useState({
         name: '',
         email: '',
         password: '',
         mobile: ''
-    })
-    const [error, setError] = useState('')
-    const [isLogin, setIsLogin] = useState(true)
-    const [showSuccess, setShowSuccess] = useState(false)
-    const [showPassword, setShowPassword] = useState(false)
-    const [isPhoneLogin, setIsPhoneLogin] = useState(false)
-    const [otpSent, setOtpSent] = useState(false)
-    const [otp, setOtp] = useState('')
-    const [loginMethod, setLoginMethod] = useState('password'); // 'password' or 'otp'
+    });
+    const [error, setError] = useState('');
+    const [isLogin, setIsLogin] = useState(true);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isPhoneLogin, setIsPhoneLogin] = useState(false);
+    const [otpSent, setOtpSent] = useState(false);
+    const [otp, setOtp] = useState('');
+    const [loginMethod, setLoginMethod] = useState('password');
 
     const onChangeHandler = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setCurrState(prev => ({
             ...prev,
             [name]: value
-        }))
-        setError('')
-    }
+        }));
+        setError('');
+    };
 
     const onSubmit = async (e) => {
-        e.preventDefault()
-
-        // Validation check
+        e.preventDefault();
         if ((!isLogin && !currState.name) || !currState.email || !currState.password) {
-            setError('Please fill all required fields')
-            return
+            setError('Please fill all required fields');
+            return;
         }
 
         try {
-            const endpoint = isLogin ? '/api/user/login' : '/api/user/register'
-            const response = await axios.post(`${API_BASE_URL}${endpoint}`, currState)
+            const endpoint = isLogin ? '/api/user/login' : '/api/user/register';
+            const response = await axios.post(`${API_BASE_URL}${endpoint}`, currState);
 
             if (response.data.success) {
                 if (isLogin) {
-                    if (response.data.token) {  // Check if token exists
-                        localStorage.setItem('token', response.data.token)
-                        localStorage.setItem('userName', response.data.user.name)
-                        toast.success('Welcome back!')
-                        // Reset state
-                        setCurrState({ name: '', email: '', password: '', mobile: '' })
+                    if (response.data.token) {
+                        localStorage.setItem('token', response.data.token);
+                        localStorage.setItem('userName', response.data.user.name);
+                        toast.success('Welcome back!');
+                        setCurrState({ name: '', email: '', password: '', mobile: '' });
                         setTimeout(() => {
-                            setShowLogin(false)
-                            window.location.reload() // Reload to update state
-                        }, 2000)
+                            setShowLogin(false);
+                            window.location.reload();
+                        }, 2000);
                     } else {
-                        setError('Authentication failed - No token received')
+                        setError('Authentication failed - No token received');
                     }
                 } else {
-                    setShowSuccess(true)
+                    setShowSuccess(true);
                     setTimeout(() => {
-                        setShowSuccess(false)
-                        setIsLogin(true)
-                        setCurrState({ name: '', email: '', password: '', mobile: '' })
-                    }, 2000)
+                        setShowSuccess(false);
+                        setIsLogin(true);
+                        setCurrState({ name: '', email: '', password: '', mobile: '' });
+                    }, 2000);
                 }
             } else {
-                setError(response.data.message || 'An error occurred')
+                setError(response.data.message || 'An error occurred');
             }
         } catch (err) {
-            console.error('Registration/Login Error:', err)
-            setError(err.response?.data?.message || 'An error occurred during authentication')
+            console.error('Registration/Login Error:', err);
+            setError(err.response?.data?.message || 'An error occurred during authentication');
         }
-    }
+    };
 
     const sendOTPHandler = async () => {
         if (!currState.mobile || currState.mobile.length !== 10) {
             setError('Please enter a valid 10-digit mobile number');
             return;
         }
-    
+
         try {
             setError('');
             const result = await sendOTP(currState.mobile);
@@ -105,66 +103,52 @@ const Login = ({ setShowLogin }) => {
             setError(errorMessage);
             toast.error(errorMessage);
         }
-    }
+    };
 
     const verifyOTPHandler = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         if (!otp || otp.length !== 6) {
-            setError('Please enter a valid 6-digit OTP')
-            return
+            setError('Please enter a valid 6-digit OTP');
+            return;
         }
 
         try {
-            setError('')
-            const result = await verifyOTP(currState.mobile, otp)
+            setError('');
+            const result = await verifyOTP(currState.mobile, otp);
             if (result.success) {
-                localStorage.setItem('token', result.token)
-                localStorage.setItem('userName', result.user.name || 'User')
-                toast.success('Login successful!')
-                setShowSuccess(true)
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('userName', result.user.name || 'User');
+                toast.success('Login successful!');
+                setShowSuccess(true);
                 setTimeout(() => {
-                    setShowSuccess(false)
-                    setShowLogin(false)
-                    window.location.reload()
-                }, 1500)
+                    setShowSuccess(false);
+                    setShowLogin(false);
+                    window.location.reload();
+                }, 1500);
             }
         } catch (err) {
-            setError(err.message)
-            toast.error(err.message)
-        }
-    }
-
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(`${API_BASE_URL}/api/user/login`, {
-                email: loginMethod === 'password' ? currState.email : null,
-                password: loginMethod === 'password' ? currState.password : null,
-                mobile: loginMethod === 'otp' ? currState.mobile : null
-            });
-
-            if (response.data.requireOTP) {
-                setOtpSent(true);
-                toast.success('OTP sent successfully');
-            } else if (response.data.success) {
-                // Handle successful login
-                localStorage.setItem('token', response.data.token);
-                setShowLogin(false);
-                toast.success('Login successful');
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Login failed');
+            setError(err.message);
+            toast.error(err.message);
         }
     };
 
     return (
         <div className="login-overlay">
+            <div className={`disclaimer ${darkMode ? 'disclaimer-dark' : ''}`}>
+                <p>
+                    <strong>⚠️ Disclaimer:</strong> This is an educational project under testing and development.
+                    <br />
+                    <br />
+                    <strong>Do NOT use real emails or passwords.</strong> This ensures personal safety.
+                </p>
+            </div>
+
             <div className={`login-container ${darkMode ? 'dark' : 'light'}`}>
                 <div className="login-title">
                     <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
-                    <img 
-                        src={assets.cross_icon} 
-                        alt="Close" 
+                    <img
+                        src={assets.cross_icon}
+                        alt="Close"
                         className="close-button"
                         onClick={() => setShowLogin(false)}
                     />
@@ -174,13 +158,13 @@ const Login = ({ setShowLogin }) => {
 
                 {isLogin && (
                     <div className="login-method-toggle">
-                        <button 
+                        <button
                             className={!isPhoneLogin ? 'active' : ''}
                             onClick={() => setIsPhoneLogin(false)}
                         >
                             Email Login
                         </button>
-                        <button 
+                        <button
                             className={isPhoneLogin ? 'active' : ''}
                             onClick={() => setIsPhoneLogin(true)}
                         >
@@ -191,7 +175,8 @@ const Login = ({ setShowLogin }) => {
 
                 {isLogin && isPhoneLogin ? (
                     <form onSubmit={verifyOTPHandler} className="login-inputs">
-                        <div className="phone-input-container">                            <div className="phone-input-group">
+                        <div className="phone-input-container">
+                            <div className="phone-input-group">
                                 <input
                                     type="tel"
                                     name="mobile"
@@ -206,8 +191,8 @@ const Login = ({ setShowLogin }) => {
                                 />
                             </div>
                             {!otpSent && (
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="send-otp-button"
                                     onClick={sendOTPHandler}
                                 >
@@ -215,17 +200,18 @@ const Login = ({ setShowLogin }) => {
                                 </button>
                             )}
                         </div>
-                        
+
                         {otpSent && (
-                            <>                                <div className="otp-input-container">
+                            <>
+                                <div className="otp-input-container">
                                     <div className="otp-input-group">
                                         <input
                                             type="text"
                                             placeholder="Enter 6-digit OTP"
                                             value={otp}
                                             onChange={(e) => {
-                                                const value = e.target.value.replace(/[^0-9]/g, '')
-                                                if (value.length <= 6) setOtp(value)
+                                                const value = e.target.value.replace(/[^0-9]/g, '');
+                                                if (value.length <= 6) setOtp(value);
                                             }}
                                             pattern="[0-9]{6}"
                                             maxLength="6"
@@ -233,8 +219,8 @@ const Login = ({ setShowLogin }) => {
                                         />
                                         <label className="input-label">Enter OTP</label>
                                     </div>
-                                    <button 
-                                        type="button" 
+                                    <button
+                                        type="button"
                                         className="resend-otp-button"
                                         onClick={sendOTPHandler}
                                     >
@@ -269,7 +255,7 @@ const Login = ({ setShowLogin }) => {
                         />
                         <div className="password-container">
                             <input
-                                type={showPassword ? "text" : "password"}
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 placeholder="Password"
                                 value={currState.password}
@@ -281,7 +267,7 @@ const Login = ({ setShowLogin }) => {
                                 className="show-password-button"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? "👁️" : "👁️‍🗨️"}
+                                {showPassword ? '👁️' : '👁️‍🗨️'}
                             </button>
                         </div>
                         {!isLogin && (
@@ -302,11 +288,7 @@ const Login = ({ setShowLogin }) => {
                         ) : (
                             <div className="terms-privacy">
                                 <div className="checkbox-wrapper">
-                                    <input 
-                                        type="checkbox" 
-                                        id="terms" 
-                                        required
-                                    />
+                                    <input type="checkbox" id="terms" required />
                                     <label htmlFor="terms">
                                         I agree to the <a href="/legal">Terms & Conditions</a> and <a href="/about">Privacy Policy</a>
                                     </label>
@@ -314,20 +296,17 @@ const Login = ({ setShowLogin }) => {
                             </div>
                         )}
 
-                        <button 
-                            type="submit"
-                            className="submit-button"
-                        >
+                        <button type="submit" className="submit-button">
                             {isLogin ? 'Login' : 'Sign Up'}
                         </button>
 
                         <p className="toggle-auth">
                             {isLogin ? "Don't have an account? " : "Already have an account? "}
-                            <span 
+                            <span
                                 onClick={() => {
-                                    setIsLogin(!isLogin)
-                                    setCurrState({ name: '', email: '', password: '', mobile: '' })
-                                    setError('')
+                                    setIsLogin(!isLogin);
+                                    setCurrState({ name: '', email: '', password: '', mobile: '' });
+                                    setError('');
                                 }}
                             >
                                 {isLogin ? 'Sign Up' : 'Login'}
@@ -337,7 +316,7 @@ const Login = ({ setShowLogin }) => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Login;
