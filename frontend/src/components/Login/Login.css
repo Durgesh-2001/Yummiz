@@ -1,0 +1,490 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --input-bg: #f5f5f5;
+    --input-text: #333333;
+    --border-color: #e0e0e0;
+    --button-bg: #ff642f;
+    --button-text: #ffffff;
+    --error-color: #ff4444;
+}
+
+[data-theme='dark'] {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --input-bg: #2d2d2d;
+    --input-text: #ffffff;
+    --border-color: #404040;
+    --button-bg: #ff642f;
+    --button-text: #ffffff;
+    --error-color: #ff6b6b;
+}
+
+.login {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+.login-container {
+    background: var(--bg-color, white);
+    padding: 1.5rem 2rem 1rem 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    animation: slideUp 0.4s ease;
+    color: var(--text-color, #333);
+}
+
+.login-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.login-title h2 {
+    font-size: 1.8rem;
+    color: var(--text-color, #333);
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-button {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: #f5f5f5;
+}
+
+.close-button:hover {
+    transform: rotate(90deg);
+    background: #ff6b6b;
+    filter: brightness(1.1);
+}
+
+/* Adjust login inputs spacing */
+.login-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;  /* Reduced from 1rem */
+    margin-bottom: 0.7rem;  /* Reduced from 1rem */
+}
+
+.login-inputs input {
+    padding: 12px;  /* Reduced from 15px */
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f8f8;
+}
+
+.login-inputs input:focus {
+    outline: none;
+    border-color: #ff6b6b;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+}
+
+.login-inputs input::placeholder {
+    color: #aaa;
+    font-weight: 300;
+}
+
+/* Add password container and show/hide password button */
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px !important;
+}
+
+.show-password-button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+}
+
+.show-password-button:hover {
+    color: #ff6b6b;
+}
+
+/* Adjust submit button spacing */
+.submit-button {
+    width: 100%;
+    padding: 12px;  /* Reduced padding */
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;  /* Slightly smaller font */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.3rem;  /* Reduced margin */
+}
+
+.submit-button:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* Adjust toggle state spacing */
+.toggle-state {
+    margin-top: 1rem;  /* Reduced from 1.5rem */
+    text-align: center;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.toggle-state span {
+    color: #ff6b6b;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 5px;
+    transition: all 0.3s ease;
+}
+
+.toggle-state span:hover {
+    color: #ff5252;
+    text-decoration: underline;
+}
+
+.error-message {
+    background: #fff5f5;
+    color: #ff4444;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    animation: shake 0.5s ease;
+}
+
+/* Adjust privacy policy spacing */
+.privacy-policy {
+    margin: 0.5rem 0;  /* Reduced from 1rem */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.privacy-policy input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.privacy-policy label {
+    cursor: pointer;
+    font-weight: 300;
+}
+
+.privacy-policy a {
+    color: #ff6b6b;
+    text-decoration: none;
+}
+
+.privacy-policy a:hover {
+    text-decoration: underline;
+}
+
+.login-method-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.login-method-toggle button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.login-method-toggle button.active {
+    background: #ff4d4d;
+    color: white;
+    border-color: #ff4d4d;
+}
+
+/* Adjust remember me spacing */
+.remember-me {
+    margin: 0.3rem 0;  /* Reduced margin */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;  /* Smaller font size */
+    color: #666;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.remember-me label {
+    cursor: pointer;
+    padding: 0 4px;
+    font-weight: 300;
+}
+
+.phone-input-container {
+    position: relative;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.phone-input-container input {
+    margin-bottom: 0;
+}
+
+.send-otp-button {
+    padding: 10px 20px !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    background-color: var(--button-bg) !important;
+    color: var(--button-text) !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.send-otp-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    color: var(--text-color);
+}
+
+.remember-me input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--button-bg);
+}
+
+.remember-me label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    user-select: none;
+    cursor: pointer;
+}
+
+.otp-input-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.otp-input-container input {
+    flex: 1;
+    margin: 0;
+}
+
+.resend-otp-button {
+    padding: 10px 15px !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    border: 1px solid var(--button-bg) !important;
+    color: var(--button-bg) !important;
+    font-size: 0.9rem !important;
+    white-space: nowrap;
+}
+
+.resend-otp-button:hover {
+    background-color: var(--button-bg) !important;
+    color: var(--button-text) !important;
+}
+
+.login input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    transition: all 0.3s ease;
+}
+
+.login input:focus {
+    outline: none;
+    border-color: var(--button-bg);
+    box-shadow: 0 0 0 2px rgba(255, 100, 47, 0.1);
+}
+
+.login button {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.login-method-toggle button {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.login-method-toggle button.active {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+}
+
+.phone-input-group,
+.otp-input-group {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.input-label {
+    position: absolute;
+    left: 12px;
+    top: -10px;
+    background-color: var(--bg-color);
+    padding: 0 5px;
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.phone-input-group input:focus + .input-label,
+.otp-input-group input:focus + .input-label {
+    color: var(--button-bg);
+}
+
+.phone-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Enhance checkbox appearance */
+input[type="checkbox"] {
+    accent-color: var(--button-bg);
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.remember-me label,
+.terms-privacy label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.remember-me label a,
+.terms-privacy label a {
+    color: var(--button-bg);
+    text-decoration: none;
+}
+
+.remember-me label a:hover,
+.terms-privacy label a:hover {
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.5rem 2rem 1rem 2rem;  /* Reduced bottom padding for mobile */
+        width: 95%;
+    }
+
+    .login-title h2 {
+        font-size: 1.5rem;
+    }
+
+    .login-inputs input,
+    .submit-button {
+        padding: 12px;
+    }
+}
+
+@media (max-height: 600px) {
+    .login-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+}

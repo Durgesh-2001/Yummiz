@@ -1,0 +1,100 @@
+:root {
+    --sidebar-width: 250px;
+    --border-color: #e1e1e1;
+    --active-color: #ff6b6b;
+    --hover-bg: #f9f9f9;
+    --active-bg: #fff0f0;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+    --border-radius: 8px;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-height: 100vh;
+    background: white;
+    box-shadow: var(--shadow);
+    padding: var(--spacing-md);
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.sidebar-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease-in-out;
+    color: #555;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Handle text overflow */
+}
+
+.sidebar-option img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.sidebar-option:hover {
+    background-color: var(--hover-bg);
+    color: var(--active-color);
+}
+
+.sidebar-option:hover img {
+    opacity: 1;
+}
+
+.sidebar-option.active {
+    background-color: var(--active-bg);
+    color: var(--active-color);
+}
+
+.sidebar-option.active img {
+    opacity: 1;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: var(--spacing-sm);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-options {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 0;
+        gap: var(--spacing-md);
+    }
+
+    .sidebar-option {
+        padding: var(--spacing-sm);
+        white-space: normal; /* Allow text to wrap */
+        text-overflow: unset; /* Remove ellipsis */
+    }
+
+    .sidebar-option p {
+        display: inline; /* Ensure text is visible inline */
+    }
+
+    .sidebar-option img {
+        width: 24px;
+        height: 24px;
+    }
+}

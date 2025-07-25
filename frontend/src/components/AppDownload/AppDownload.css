@@ -1,0 +1,102 @@
+.app-download {
+    margin: 100px auto;
+    padding: 40px 20px;
+    text-align: center;
+    max-width: 1200px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    animation: fadeIn 1s ease;
+}
+
+.app-download h2 {
+    font-size: max(2.5vw, 24px);
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.app-download p {
+    font-size: max(1.2vw, 16px);
+    color: var(--text-color);
+    opacity: 0.8;
+    max-width: 800px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.app-download-platforms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: max(2vw, 20px);
+    margin-top: 40px;
+}
+
+.app-download-platforms a {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.app-download-platforms img {
+    width: max(18vw, 140px);
+    max-width: 180px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.app-download-platforms a:hover {
+    transform: translateY(-5px);
+}
+
+.app-download-platforms a:hover img {
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
+
+@media screen and (max-width: 768px) {
+    .app-download {
+        margin: 60px auto;
+        padding: 30px 15px;
+    }
+
+    .app-download h2 {
+        font-size: 20px;
+    }
+
+    .app-download p {
+        font-size: 14px;
+    }
+
+    .app-download-platforms {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .app-download-platforms img {
+        width: 140px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark mode overrides */
+.dark-mode .app-download {
+    background: var(--card-bg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .app-download-platforms img {
+    filter: brightness(0.9) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.dark-mode .app-download-platforms a:hover img {
+    filter: brightness(1) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}

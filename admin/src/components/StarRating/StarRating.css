@@ -1,0 +1,56 @@
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.star-rating-container {
+  position: relative;
+  display: flex;
+  font-size: 30px;
+  line-height: 1;
+  height: 30px;
+  width: 150px;
+  user-select: none;
+}
+
+.star {
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s ease;
+  background: linear-gradient(to right, gold 50%, #ddd 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-size: 200% 100%;
+}
+
+.star.filled {
+  background-position: 0 0;
+}
+
+.star.empty {
+  background-position: 100% 0;
+}
+
+/* Generate classes for partial fills */
+.star[class*="partially-filled-"] {
+  background-size: 200% 100%;
+}
+
+.star.partially-filled-10 { background-position: 90% 0; }
+.star.partially-filled-20 { background-position: 80% 0; }
+.star.partially-filled-30 { background-position: 70% 0; }
+.star.partially-filled-40 { background-position: 60% 0; }
+.star.partially-filled-50 { background-position: 50% 0; }
+.star.partially-filled-60 { background-position: 40% 0; }
+.star.partially-filled-70 { background-position: 30% 0; }
+.star.partially-filled-80 { background-position: 20% 0; }
+.star.partially-filled-90 { background-position: 10% 0; }
+
+.star-rating-number {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+  min-width: 36px;
+}
