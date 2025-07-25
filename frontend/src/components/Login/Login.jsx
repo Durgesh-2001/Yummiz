@@ -25,6 +25,7 @@ const Login = ({ setShowLogin }) => {
     const [otpSent, setOtpSent] = useState(false);
     const [otp, setOtp] = useState('');
     const [loginMethod, setLoginMethod] = useState('password');
+    const [showPhoneLoginWarning, setShowPhoneLoginWarning] = useState(true);
 
     const onChangeHandler = (e) => {
         const { name, value } = e.target;
@@ -142,6 +143,15 @@ const Login = ({ setShowLogin }) => {
                     <strong>Do NOT use real emails or passwords.</strong> This ensures personal safety.
                 </p>
             </div>
+
+            {isLogin && isPhoneLogin && showPhoneLoginWarning && (
+                <div className="phone-warning">
+                    <p>
+                        <strong>Note: Phone login is currently under maintenance. <br />Please use email login if possible.</strong>
+                    </p>
+                    <button className="close-btn" onClick={() => setShowPhoneLoginWarning(false)}>&times;</button>
+                </div>
+            )}
 
             <div className={`login-container ${darkMode ? 'dark' : 'light'}`}>
                 <div className="login-title">
@@ -301,6 +311,7 @@ const Login = ({ setShowLogin }) => {
                         </button>
 
                         <p className="toggle-auth">
+                            <br />
                             {isLogin ? "Don't have an account? " : "Already have an account? "}
                             <span
                                 onClick={() => {
